@@ -1,0 +1,14 @@
+fastapi
+pydantic
+uvicorn
+absl-py
+google-cloud
+google-cloud-logging
+pandas
+google-api-core
+google-cloud-aiplatform>=1.44
+SQLAlchemy
+pg8000
+pgvector
+gspread
+tenacity
