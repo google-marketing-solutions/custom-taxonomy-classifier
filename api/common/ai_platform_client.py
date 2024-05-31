@@ -227,10 +227,9 @@ class AiPlatformClient:
         contents_delta_uri=f'gs://{self._bucket_name}',
         dimensions=768,
         approximate_neighbors_count=10,
-        # TODO: b/330916393 - Change to DOT_PRODUCT_DISTANCE + UNIT_L2_NORM once
-        # feature norm type setting is available.
-        distance_measure_type='COSINE_DISTANCE',
+        distance_measure_type='DOT_PRODUCT_DISTANCE',
         shard_size=shard_size,
+        feature_norm_type='UNIT_L2_NORM',
     )
 
     return embedding_index

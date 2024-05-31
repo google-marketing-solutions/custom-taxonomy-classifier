@@ -130,7 +130,7 @@ class ClassifyService:
       similar_categories = []
       for category in result:
         similar_categories.append(
-            {'name': category.id, 'similarity': 1 - category.distance}
+            {'name': category.id, 'similarity': category.distance}
         )
       if _has_valid_extension(text):
         classify_results.append(

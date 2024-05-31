@@ -171,8 +171,9 @@ class AiplatformClientTest(absltest.TestCase):
         contents_delta_uri='gs://fake_bucket_name',
         dimensions=768,
         approximate_neighbors_count=10,
-        distance_measure_type='COSINE_DISTANCE',
+        distance_measure_type='DOT_PRODUCT_DISTANCE',
         shard_size=_DEFAULT_SHARD_SIZE,
+        feature_norm_type='UNIT_L2_NORM',
     )
 
   def test_create_embeddings_index_endpoint(self):
