@@ -24,7 +24,7 @@ from google.auth import transport
 from google.cloud import exceptions
 from google.cloud import storage
 import numpy as np
-from custom_taxonomy_classifier.api.datamodel import taxonomy as taxonomy_lib
+from datamodel import taxonomy as taxonomy_lib
 
 
 _CATEGORIES_PER_FILE = 3500

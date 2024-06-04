@@ -21,14 +21,14 @@ import uuid
 from absl import logging
 import fastapi
 import pydantic
-from custom_taxonomy_classifier.api.common import ai_platform_client as ai_platform_client_lib
-from custom_taxonomy_classifier.api.common import api_utils
-from custom_taxonomy_classifier.api.common import vertex_client as vertex_client_lib
+from common import ai_platform_client as ai_platform_client_lib
+from common import api_utils
+from common import vertex_client as vertex_client_lib
 import google.cloud.logging
-from custom_taxonomy_classifier.api.database import base_postgres_client as base_postgres_client_lib
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import postgres_client as postgres_client_lib
-from custom_taxonomy_classifier.api.services import classify_service as classify_service_lib
+from database import base_postgres_client as base_postgres_client_lib
+from database import errors
+from database import postgres_client as postgres_client_lib
+from services import classify_service as classify_service_lib
 
 clients = {}
 services = {}

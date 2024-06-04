@@ -23,7 +23,7 @@ from google.api_core import exceptions
 import google.auth
 from google.cloud import aiplatform
 
-from custom_taxonomy_classifier.api.common import ai_platform_client as ai_platform_client_lib
+from common import ai_platform_client as ai_platform_client_lib
 from absl.testing import absltest
 
 

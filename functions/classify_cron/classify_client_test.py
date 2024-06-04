@@ -16,8 +16,8 @@
 
 import os
 from unittest import mock
-from custom_taxonomy_classifier.functions.classify_cron import classify_client as classify_client_lib
-from custom_taxonomy_classifier.functions.classify_cron import utils
+import classify_client as classify_client_lib
+import utils
 from absl.testing import absltest
 
 

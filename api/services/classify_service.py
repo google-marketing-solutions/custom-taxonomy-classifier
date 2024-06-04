@@ -18,9 +18,9 @@ import dataclasses
 import os
 from typing import Optional, Union
 from absl import logging
-from custom_taxonomy_classifier.api.common import ai_platform_client as ai_platform_client_lib
-from custom_taxonomy_classifier.api.common import vertex_client as vertex_client_lib
-from custom_taxonomy_classifier.api.database import postgres_client as postgres_client_lib
+from common import ai_platform_client as ai_platform_client_lib
+from common import vertex_client as vertex_client_lib
+from database import postgres_client as postgres_client_lib
 
 
 @dataclasses.dataclass

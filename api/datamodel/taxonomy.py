@@ -16,7 +16,7 @@
 
 from typing import Any, Optional
 import pandas as pd
-from custom_taxonomy_classifier.api.datamodel import category as category_lib
+from datamodel import category as category_lib
 
 
 class Taxonomy:

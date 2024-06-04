@@ -23,7 +23,7 @@ from typing import Any
 
 from absl import logging
 
-from custom_taxonomy_classifier.functions.classify_cron import utils
+import utils
 
 
 _BATCH_SIZE = 1000

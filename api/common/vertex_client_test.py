@@ -20,7 +20,7 @@ import google.api_core
 import vertexai
 from vertexai import generative_models
 from vertexai.language_models import TextEmbeddingModel
-from custom_taxonomy_classifier.api.common import vertex_client as vertex_client_lib
+from common import vertex_client as vertex_client_lib
 from absl.testing import absltest
 from absl.testing import parameterized
 

@@ -20,7 +20,7 @@ import os
 from absl import logging
 from google.cloud import bigquery
 
-from custom_taxonomy_classifier.functions.classify_cron import constants
+import constants
 
 
 _BQ_STREAMING_INSERT_BATCH_SIZE = 1000

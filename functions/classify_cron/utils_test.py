@@ -19,7 +19,7 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import requests_mock
 import tenacity
-from custom_taxonomy_classifier.functions.classify_cron import utils
+import utils
 from absl.testing import absltest
 
 

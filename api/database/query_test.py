@@ -15,8 +15,8 @@
 """Tests for query."""
 
 import sqlalchemy
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import query
+from database import errors
+from database import query
 from absl.testing import absltest
 
 

@@ -14,8 +14,8 @@
 
 """Test for the Taxonomy class."""
 
-from custom_taxonomy_classifier.api.datamodel import category as category_lib
-from custom_taxonomy_classifier.api.datamodel import taxonomy as taxonomy_lib
+from datamodel import category as category_lib
+from datamodel import taxonomy as taxonomy_lib
 from absl.testing import absltest
 
 

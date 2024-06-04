@@ -18,7 +18,7 @@ from typing import Type
 
 import sqlalchemy
 
-from custom_taxonomy_classifier.api.database import errors
+from database import errors
 
 
 class Query:

@@ -18,7 +18,7 @@ import os
 from unittest import mock
 import freezegun
 from google.cloud import bigquery
-from custom_taxonomy_classifier.functions.classify_cron import bigquery_client as bigquery_client_lib
+import bigquery_client as bigquery_client_lib
 from absl.testing import absltest
 
 

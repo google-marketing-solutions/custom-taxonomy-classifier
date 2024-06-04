@@ -21,9 +21,9 @@ import google.auth
 from google.cloud import exceptions
 from google.cloud import storage
 
-from custom_taxonomy_classifier.api.common import storage_client as storage_client_lib
-from custom_taxonomy_classifier.api.datamodel import category as category_lib
-from custom_taxonomy_classifier.api.datamodel import taxonomy as taxonomy_lib
+from common import storage_client as storage_client_lib
+from datamodel import category as category_lib
+from datamodel import taxonomy as taxonomy_lib
 from absl.testing import absltest
 
 _FAKE_BUCKET_NAME = 'fake_bucket_name'

@@ -17,8 +17,8 @@
 from absl import logging
 import flask
 import functions_framework
-from custom_taxonomy_classifier.functions.classify_cron import bigquery_client as bigquery_client_lib
-from custom_taxonomy_classifier.functions.classify_cron import classify_client as classify_client_lib
+import bigquery_client as bigquery_client_lib
+import classify_client as classify_client_lib
 import google.cloud.logging
 
 logging_client = google.cloud.logging.Client()

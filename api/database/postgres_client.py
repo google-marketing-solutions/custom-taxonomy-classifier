@@ -20,10 +20,10 @@ from typing import Union
 from absl import logging
 import sqlalchemy
 
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import queries
-from custom_taxonomy_classifier.api.database import query as query_lib
-from custom_taxonomy_classifier.api.datamodel import task as task_lib
+from database import errors
+from database import queries
+from database import query as query_lib
+from datamodel import task as task_lib
 
 
 class PostgresClient:

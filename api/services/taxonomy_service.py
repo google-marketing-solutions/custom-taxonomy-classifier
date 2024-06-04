@@ -17,13 +17,13 @@
 from absl import logging
 import google.auth
 import gspread
-from custom_taxonomy_classifier.api.common import ai_platform_client as ai_platform_client_lib
-from custom_taxonomy_classifier.api.common import storage_client as storage_client_lib
-from custom_taxonomy_classifier.api.common import vertex_client as vertex_client_lib
-from custom_taxonomy_classifier.api.database import postgres_client as postgres_client_lib
-from custom_taxonomy_classifier.api.datamodel import category as category_lib
-from custom_taxonomy_classifier.api.datamodel import task as task_lib
-from custom_taxonomy_classifier.api.datamodel import taxonomy as taxonomy_lib
+from common import ai_platform_client as ai_platform_client_lib
+from common import storage_client as storage_client_lib
+from common import vertex_client as vertex_client_lib
+from database import postgres_client as postgres_client_lib
+from datamodel import category as category_lib
+from datamodel import task as task_lib
+from datamodel import taxonomy as taxonomy_lib
 
 
 class Error(Exception):

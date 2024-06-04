@@ -20,8 +20,8 @@ import freezegun
 from google.cloud.sql.connector import connector
 import pandas as pd
 import sqlalchemy
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import postgres_client as postgres_client_lib
+from database import errors
+from database import postgres_client as postgres_client_lib
 from absl.testing import absltest
 
 

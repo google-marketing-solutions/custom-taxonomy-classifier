@@ -17,9 +17,9 @@
 import os
 from unittest import mock
 import sqlalchemy
-from custom_taxonomy_classifier.api.database import base_postgres_client
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import models as models_lib
+from database import base_postgres_client
+from database import errors
+from database import models as models_lib
 from absl.testing import absltest
 
 

@@ -20,14 +20,14 @@ from unittest import mock
 from google import auth
 
 from custom_taxonomy_classifier.api import generate_taxonomy_embeddings
-from custom_taxonomy_classifier.api.common import ai_platform_client as ai_platform_client_lib
-from custom_taxonomy_classifier.api.common import storage_client as storage_client_lib
-from custom_taxonomy_classifier.api.common import vertex_client as vertex_client_lib
-from custom_taxonomy_classifier.api.database import base_postgres_client as base_postgres_client_lib
-from custom_taxonomy_classifier.api.database import models as models_lib
-from custom_taxonomy_classifier.api.database import postgres_client as postgres_client_lib
-from custom_taxonomy_classifier.api.datamodel import task as task_lib
-from custom_taxonomy_classifier.api.services import taxonomy_service as taxonomy_service_lib
+from common import ai_platform_client as ai_platform_client_lib
+from common import storage_client as storage_client_lib
+from common import vertex_client as vertex_client_lib
+from database import base_postgres_client as base_postgres_client_lib
+from database import models as models_lib
+from database import postgres_client as postgres_client_lib
+from datamodel import task as task_lib
+from services import taxonomy_service as taxonomy_service_lib
 from absl.testing import absltest
 
 

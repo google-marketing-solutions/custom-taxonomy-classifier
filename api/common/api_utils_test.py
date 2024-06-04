@@ -16,7 +16,7 @@
 
 import requests
 import requests_mock
-from custom_taxonomy_classifier.api.common import api_utils
+from common import api_utils
 from absl.testing import absltest
 
 

@@ -19,8 +19,8 @@ import os
 from absl import logging
 import sqlalchemy
 
-from custom_taxonomy_classifier.api.database import errors
-from custom_taxonomy_classifier.api.database import models as models_lib
+from database import errors
+from database import models as models_lib
 
 _DRIVER = 'pg8000'
 _ENGINE_POOL_SIZE = 25

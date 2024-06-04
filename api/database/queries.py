@@ -14,7 +14,7 @@
 
 """Module to hold Postgres DB queries."""
 
-from custom_taxonomy_classifier.api.database import query as query_lib
+from database import query as query_lib
 
 
 class DeleteTask(query_lib.Query):
