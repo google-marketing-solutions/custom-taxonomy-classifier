@@ -9,16 +9,19 @@ time-consuming.
 
 ## Solution
 
-Using an existing LLM's text embeddings we can calculate the cosine similarity
-of a given piece of text and every category in a custom taxonomy. The higher the
-cosine similarity the higher the confidence that the passed text is part of that
-category. Cosine Similarity is a standard metric in natural language
-classification systems and has several advantages. Most importantly it compares
-the angle between text vectors and not their absolute distances - capturing
-semantic similarity regardless of varying lengths of text being compared. It
-also works well with high-dimensional text data containing many zero elements
-and scores ranging from 0 (no similarity) to 1 (perfect match), providing
-intuitive insights.
+Using an existing LLM's text embeddings we can calculate the dot product
+similarity and apply unit-norm normalization for a given piece of text and every
+category in a custom taxonomy. The higher the dot product similarity the higher
+the confidence that the passed text is part of that category. Dot Product
+Similarity is a standard metric in natural language classification systems and
+has several advantages. Most importantly, it measures the similarity between
+text and categories by calculating the cosine of the angle between their vector
+representations. The dot product of the vectors are then calculated by
+multiplying their corresponding elements and summing the results. The cosine of
+the angle between them is then calculated by dividing the dot product by the
+product of the magnitudes of the vectors. It also works well with
+high-dimensional text data containing many zero elements and scores ranging from
+0 (no similarity) to 1 (perfect match), providing intuitive insights.
 
 ## Prerequisites
 
@@ -33,7 +36,8 @@ instructions. If there's a problem with the deployment then address the error
 message and run the command again.
 
 ```sh
-git clone https://professional-services.googlesource.com/customers/system1/classifier && \
+corp/gtech/ads/solutions/custom_taxonomy_classifier/README.md
+git clone https://professional-services.googlesource.com/solutions/custom_taxonomy_classifier && \
 cd classifier/api && \
 chmod 775 ./setup.sh && \
 ./setup.sh
@@ -85,9 +89,10 @@ task status using the task_status endpoint.
     true.
 
 ```sh
-curl -X POST -H 'Authorization: Bearer $(gcloud auth print-identity-token)'
--H 'Content-Type: application/json'
--d '{"spreadsheet_id": "[YOUR-GOOGLE-SPREADSHEET-ID]", "worksheet_name": "Sheet1", "worksheet_col_index": "1", "header": "False"}'
+curl -X POST \
+-H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+-H 'Content-Type: application/json' \
+-d '{"spreadsheet_id": "[YOUR-GOOGLE-SPREADSHEET-ID]", "worksheet_name": "Sheet1", "worksheet_col_index": "1", "header": "False"}' \
 -i [YOUR-CLOUD-RUN-URL]/generate_taxonomy_embeddings
 ```
 
@@ -118,7 +123,8 @@ The endpoint can be used to retrieve the current status of a particular task.
 *   *task_id* (required): The ID of the Google Spreadsheet.
 
 ```sh
-curl -X GET -H 'Authorization: Bearer $(gcloud auth print-identity-token)'
+curl -X GET \
+-H "Authorization: Bearer $(gcloud auth print-identity-token)" \
 -i [YOUR-CLOUD-RUN-URL]/task_status/9687244b-6883-474a-97f6-a29f5f91b522
 ```
 
@@ -164,33 +170,35 @@ their corresponding scores (similarity).
 With a list of strings:
 
 ```sh
-curl -X POST -H 'Authorization: Bearer $(gcloud auth print-identity-token)'
--H 'Content-Type: application/json'
--d '{"text": ["Text to classify","Some other Text to classify"]}'
+curl -X POST \
+-H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+-H 'Content-Type: application/json' \
+-d '{"text": ["Text to classify","Some other Text to classify"]}' \
 -i [YOUR-CLOUD-RUN-URL]/classify
 ```
 
 With a single string:
 
 ```sh
-curl -X POST -H 'Authorization: Bearer $(gcloud auth print-identity-token)'
--H 'Content-Type: application/json'
--d '{"text": "Text to classify"}'
+curl -X POST \
+-H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+-H 'Content-Type: application/json' \
+-d '{"text": "Text to classify"}' \
 -i [YOUR-CLOUD-RUN-URL]/classify
 ```
 
 #### Response format
 
-The API response will show the top 10 categories in terms of cosine similarity
-to the passed text.
+The API response will show the top 10 categories in terms of dot product
+similarity to the passed text.
 
 ##### Categories Similarity Object
 
 **Attributes**:
 
 *   *name*: The name of the category within the given taxonomy.
-*   *similarity*: A float of the cosine similarity of the category to the passed
-    text.
+*   *similarity*: A float of the dot product similarity of the category to the
+    passed text.
 
 ##### Results Object
 
