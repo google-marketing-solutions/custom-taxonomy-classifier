@@ -28,7 +28,7 @@ from vertexai.language_models import TextEmbeddingModel
 import tenacity
 
 _TEXT_EMBEDDING_MODEL = 'textembedding-gecko-multilingual@001'
-_GENERATIVE_MODEL = 'gemini-1.0-pro-vision-001'
+_GENERATIVE_MODEL = 'gemini-1.5-flash-001'
 
 _GENERATION_CONFIG = generative_models.GenerationConfig(
     temperature=0.8,
