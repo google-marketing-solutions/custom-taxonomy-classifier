@@ -94,7 +94,7 @@ class VertexClientTest(parameterized.TestCase):
       ),
       dict(
           testcase_name='empty',
-          text_list='',
+          text_list=[],
           media_descriptions=None,
           expected={},
       ),
@@ -115,6 +115,20 @@ class VertexClientTest(parameterized.TestCase):
           text_list=None,
           media_descriptions=None,
           expected={},
+      ),
+      dict(
+          testcase_name='text_and_media',
+          text_list=['fake_text1', 'fake_text2', 'fake_text3'],
+          media_descriptions=[
+              ('gs://fake/path/to/media.jpeg', 'fake_media_text'),
+              ('gs://fake/path/to/media2.jpeg', 'fake_media_text2'),
+          ],
+          expected={
+              'fake_text1': [0.1, 0.2, 0.3],
+              'fake_text2': [0.1, 0.2, 0.3],
+              'fake_text3': [0.1, 0.2, 0.3],
+              'gs://fake/path/to/media.jpeg': [0.1, 0.2, 0.3],
+              'gs://fake/path/to/media2.jpeg': [0.1, 0.2, 0.3],},
       ),
   )
   def test_get_embeddings_batch(self, text_list, media_descriptions, expected):

@@ -175,18 +175,23 @@ class VertexClient:
       A tuple of two lists containing the text for which to generate embeddings
       and keys used for the output embeddings.
     """
-    text_values = text_list or []
-    output_keys = text_list or []
+    text_list = [] if text_list is None else text_list
+    media_descriptions = (
+        [] if media_descriptions is None else media_descriptions
+    )
+    unified_list = text_list + media_descriptions
 
-    if media_descriptions:
-      media_uris = [
-          media_description[0] for media_description in media_descriptions
-      ]
-      descriptions = [
-          media_description[1] for media_description in media_descriptions
-      ]
-      text_values.extend(descriptions)
-      output_keys.extend(media_uris)
+    text_values = []
+    output_keys = []
+
+    for element in unified_list:
+      if isinstance(element, tuple):
+        text_values.append(element[1])
+        output_keys.append(element[0])
+      else:
+        text_values.append(element)
+        output_keys.append(element)
+
     return output_keys, text_values
 
   def get_embeddings_batch(
