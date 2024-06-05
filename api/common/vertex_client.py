@@ -51,7 +51,7 @@ SUPPORTED_VIDEO_TYPES = frozenset([
     '3gpp',
 ])
 
-SUPPORTED_IMAGE_TYPES = frozenset(['jpeg', 'png'])
+SUPPORTED_IMAGE_TYPES = frozenset(['jpeg', 'jpg', 'png'])
 
 SUPPORTED_MEDIA_TYPES = frozenset().union(
     *[SUPPORTED_VIDEO_TYPES, SUPPORTED_IMAGE_TYPES]
