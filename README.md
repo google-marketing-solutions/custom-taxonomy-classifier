@@ -36,9 +36,8 @@ instructions. If there's a problem with the deployment then address the error
 message and run the command again.
 
 ```sh
-corp/gtech/ads/solutions/custom_taxonomy_classifier/README.md
 git clone https://professional-services.googlesource.com/solutions/custom_taxonomy_classifier && \
-cd classifier/api && \
+cd api && \
 chmod 775 ./setup.sh && \
 ./setup.sh
 ```
@@ -162,10 +161,10 @@ their corresponding scores (similarity).
 
 *   *text* (optional): The text content to classify. This can be a single string
     or a list of strings.
-*   *image_uri* (optional): The image to classify. This can be a single file
+*   *media_uri* (optional): The media to classify. This can be a single file
     path to a GCS location or a list of file paths. Note that only the following
-    image extensions are supported: `.jpg, .jpeg, .png, .gif, .bmp, .tiff,
-    .webp`
+    media extensions are supported: `.jpg, .jpeg, .png, .x-flv, .mov, .mpeg,
+    .mpegps, .mpg, .mp4, .webm, .wmv, .3gpp`
 
 With a list of strings:
 
@@ -214,7 +213,7 @@ The below would be a response for the following request data:
 ```sh
 {
   "text": "Text to classify",
-  "image_uri": "gs://path/to/image.jpg"
+  "media_uri": "gs://path/to/image.jpg"
 }
 ```
 
@@ -222,7 +221,7 @@ The below would be a response for the following request data:
 [
   {
     "text": "Text to classify"
-    "image_uri": "null",
+    "media_uri": "null",
     "categories": [
       {
         "name": "Some category",
@@ -237,7 +236,7 @@ The below would be a response for the following request data:
   },
   {
     "text": "null",
-    "image_uri": "gs://path/to/image.jpg",
+    "media_uri": "gs://path/to/image.jpg",
     "categories": [
       {
         "name": "Some category",
