@@ -37,7 +37,7 @@ message and run the command again.
 
 ```sh
 git clone https://professional-services.googlesource.com/solutions/custom_taxonomy_classifier && \
-cd api && \
+cd custom_taxonomy_classifier/api && \
 chmod 775 ./setup.sh && \
 ./setup.sh
 ```
