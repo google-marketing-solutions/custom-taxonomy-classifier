@@ -6,7 +6,7 @@ google-cloud
 google-cloud-logging
 pandas
 google-api-core
-google-cloud-aiplatform>=1.44
+google-cloud-aiplatform>=1.49
 SQLAlchemy
 pg8000
 pgvector
