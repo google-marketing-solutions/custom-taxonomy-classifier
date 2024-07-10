@@ -12,3 +12,4 @@ pg8000
 pgvector
 gspread
 tenacity
+mimetype

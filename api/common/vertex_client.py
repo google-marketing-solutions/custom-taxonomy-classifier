@@ -17,6 +17,7 @@
 from concurrent import futures
 import dataclasses
 import math
+import mimetypes
 import multiprocessing
 import os
 from typing import Optional, cast
@@ -128,9 +129,8 @@ class VertexClient:
     """
     file_extension = os.path.splitext(media_path)[1].replace('.', '')
     file_type = self._get_file_type_from_extension(file_extension)
-    media_content = generative_models.Part.from_uri(
-        media_path, f'{file_type}/{file_extension}'
-    )
+    mime_type = mimetypes.guess_type(media_path)[0]
+    media_content = generative_models.Part.from_uri(media_path, mime_type)
     response = self._text_generation_client.generate_content(
         contents=[media_content, getattr(Prompt, file_type.upper())],
         stream=False,
