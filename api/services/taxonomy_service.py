@@ -111,7 +111,6 @@ class TaxonomyService:
         self.task_id,
         task_lib.TaskStatus.IN_PROGRESS_CREATING_EMBEDDINGS_INDEX_ENDPOINT
     )
-
     embeddings_index_endpoint = (
         self._ai_platform_client.create_embeddings_index_endpoint()
     )
@@ -123,6 +122,10 @@ class TaxonomyService:
     self._postgres_client.update_task(
         self.task_id,
         task_lib.TaskStatus.IN_PROGRESS_DEPLOYING_EMBEDDINGS_INDEX_TO_ENDPOINT
+    )
+
+    self._ai_platform_client.undeploy_embedding_index_from_endpoint(
+        embeddings_index_endpoint
     )
 
     self._ai_platform_client.deploy_embedding_index_to_endpoint(

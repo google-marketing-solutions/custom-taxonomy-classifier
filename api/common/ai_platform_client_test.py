@@ -248,6 +248,27 @@ class AiplatformClientTest(absltest.TestCase):
     with self.assertRaises(ai_platform_client_lib.NotFoundError):
       ai_platform_client.find_neighbors_for_vectors(vectors=vectors)
 
+  def test_undeploy_embedding_index_from_endpoint(self):
+    ai_platform_client = ai_platform_client_lib.AiPlatformClient()
+    ai_platform_client.undeploy_embedding_index_from_endpoint(
+        embedding_index_endpoint=self.mock_matching_engine_endpoint
+    )
+
+    self.mock_matching_engine_endpoint.undeploy_index.assert_called_once_with(
+        self.deployed_index_mock.id
+    )
+
+  def test_undeploy_embedding_index_from_endpoint_if_none_exists_not_called(
+      self,
+  ):
+    self.mock_matching_engine_endpoint.return_value.deployed_indexes = []
+    ai_platform_client = ai_platform_client_lib.AiPlatformClient()
+    ai_platform_client.undeploy_embedding_index_from_endpoint(
+        embedding_index_endpoint=self.mock_matching_engine_endpoint
+    )
+
+    self.mock_matching_engine_endpoint.undeploy_index.assert_not_called()
+
 
 if __name__ == '__main__':
   absltest.main()

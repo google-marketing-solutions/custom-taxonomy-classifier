@@ -14,11 +14,14 @@
 
 """Generates taxonomy embeddings for a task."""
 
+import datetime
 import os
 import sys
+from typing import Optional
 import uuid
 
 from absl import logging
+from googleapiclient import discovery
 
 from common import ai_platform_client as ai_platform_client_lib
 from common import storage_client as storage_client_lib
@@ -35,11 +38,78 @@ logging_client = google.cloud.logging.Client()
 logging_client.setup_logging()
 
 # Retrieve Job-defined env vars
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
-WORKSHEET_NAME = os.getenv('WORKSHEET_NAME')
-WORKSHEET_COL_INDEX = os.getenv('WORKSHEET_COL_INDEX')
-HEADER = os.getenv('HEADER', 'False') == 'True'
-TASK_ID = os.getenv('TASK_ID', str(uuid.uuid4()))
+SPREADSHEET_ID: Optional[str] = os.getenv('SPREADSHEET_ID')
+WORKSHEET_NAME: Optional[str] = os.getenv('WORKSHEET_NAME')
+WORKSHEET_COL_INDEX: Optional[str] = os.getenv('WORKSHEET_COL_INDEX')
+HEADER: bool = os.getenv('HEADER', 'False') == 'True'
+TASK_ID: Optional[str] = os.getenv('TASK_ID', str(uuid.uuid4()))
+GCP_PROJECT_ID: Optional[str] = os.getenv('GCP_PROJECT_ID')
+GCP_REGION: Optional[str] = os.getenv('GCP_REGION')
+SERVICE_NAME: Optional[str] = 'classify-service'
+
+
+def restart_cloud_run_service(
+    project_id: str, region: str, service_name: str
+) -> None:
+  """Restarts a Cloud Run service using the googleapiclient.discovery library.
+
+  Args:
+      project_id: Your Google Cloud project ID.
+      region: The region where the Cloud Run service is deployed.
+      service_name: The name of the Cloud Run service.
+  """
+  service = discovery.build('run', 'v2')
+  parent = f'projects/{project_id}/locations/{region}'
+  name = f'{parent}/services/{service_name}'
+
+  # Get the current configuration of the service.
+  logging.info('Retrieving current configuration for service %s.', service_name)
+  service_config = (
+      service.projects().locations().services().get(name=name).execute()
+  )
+  # Update the service configuration to trigger a restart
+  # We don't technically make any configuration changes for a restart,
+  # but we need to send an update request to trigger the restart, so we add
+  # a new env var with the current timestamp to force a change.
+  env_vars = service_config['template']['containers'][0]['env']
+  env_vars.append(
+      {'name': 'RESTART_TIME', 'value': str(datetime.datetime.now())}
+  )
+  service_config['template']['containers'][0]['env'] = env_vars
+
+  logging.info(
+      'Restart initiated for service %s. Waiting for operation to complete...',
+      service_name,
+  )
+  operation = (
+      service.projects()
+      .locations()
+      .services()
+      .patch(
+          name=name,
+          body=service_config,
+      )
+      .execute()
+  )
+  # Poll the operation to wait for completion.
+  while True:
+    operation_result = (
+        service.projects()
+        .locations()
+        .operations()
+        .get(name=operation['name'])
+        .execute()
+    )
+    if operation_result.get('done'):
+      break
+
+  # Check if the restart operation was successful.
+  if 'error' in operation_result:
+    logging.error(
+        'Error restarting service %s: {operation_result["error"]}', service_name
+    )
+  else:
+    logging.info('Service %s restarted successfully.', service_name)
 
 
 def setup_vector_search_endpoint_from_spreadsheet_data(
@@ -94,6 +164,7 @@ if __name__ == '__main__':
     setup_vector_search_endpoint_from_spreadsheet_data(
         SPREADSHEET_ID, WORKSHEET_NAME, WORKSHEET_COL_INDEX, HEADER, TASK_ID
     )
+    restart_cloud_run_service(GCP_PROJECT_ID, GCP_REGION, SERVICE_NAME)
   except taxonomy_service_lib.GetTaxonomyError:
     logging.exception(
         'Generating taxonomy embeddings for task: %s failed.',
