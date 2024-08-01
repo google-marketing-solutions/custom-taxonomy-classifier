@@ -212,10 +212,6 @@ resource "google_cloud_run_v2_job" "taxonomy_job_run" {
   ]
 }
 
-## In order to update the Cloud Run deployment when the underlying :latest
-## image changes, we will retrieve the sha256_digest of the image through
-## the docker provider, since the google container registry does not seem
-## to have an API.
 data "google_client_config" "default" {}
 
 provider "docker" {
@@ -226,22 +222,14 @@ provider "docker" {
   }
 }
 
-data "docker_registry_image" "classify_service_image" {
-  name = format("%s:%s", var.classify_service_image, "latest")
-}
-
-data "docker_registry_image" "taxonomy_job_image" {
-  name = format("%s:%s", var.taxonomy_job_image, "latest")
-}
-
 data "google_container_registry_image" "classify_service_latest" {
   name    = "classify-service"
   project = var.project_id
-  digest  = data.docker_registry_image.classify_service_image.sha256_digest
+  tag     = "latest"
 }
 
 data "google_container_registry_image" "taxonomy_job_latest" {
   name    = "taxonomy-job"
   project = var.project_id
-  digest  = data.docker_registry_image.taxonomy_job_image.sha256_digest
+  tag     = "latest"
 }

@@ -18,6 +18,20 @@
 mkdir ~/.cloudshell touch ~/.cloudshell/no-apt-get-warning
 sudo apt-get install fzf
 
+# Enable the APIs.
+REQUIRED_APIS=(
+  storage.googleapis.com
+  iap.googleapis.com
+  compute.googleapis.com
+  run.googleapis.com
+  cloudbuild.googleapis.com
+  cloudresourcemanager.googleapis.com
+)
+
+for API in "${REQUIRED_APIS[@]}"; do
+  gcloud services enable "$API"
+done
+
 # Get a list of accessible gcloud projects and store them in an array
 projects=($(gcloud projects list --format="value(projectId)"))
 
@@ -69,19 +83,6 @@ POSTGRES_DB_PASSWORD=$postgres_db_password
 terraform_state_bucket_name="${GOOGLE_CLOUD_PROJECT}-bucket-tfstate"
 classify_service_image="gcr.io/${GOOGLE_CLOUD_PROJECT}/classify-service"
 taxonomy_job_image="gcr.io/${GOOGLE_CLOUD_PROJECT}/taxonomy-job"
-
-
-# Enable the APIs.
-REQUIRED_APIS=(
-  storage.googleapis.com
-  iap.googleapis.com
-  compute.googleapis.com
-  run.googleapis.com
-)
-
-for API in "${REQUIRED_APIS[@]}"; do
-  gcloud services enable "$API"
-done
 
 # Create a GCS bucket to store terraform state files.
 echo "Creating terraform state cloud storage bucket..."
