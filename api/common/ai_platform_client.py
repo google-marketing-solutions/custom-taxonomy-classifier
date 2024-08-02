@@ -312,21 +312,23 @@ class AiPlatformClient:
       )
       raise
 
-  def undeploy_embedding_index_from_endpoint(
+  def delete_all_embedding_index_endpoints(
       self,
-      embedding_index_endpoint: aiplatform.MatchingEngineIndexEndpoint,
   ) -> None:
-    """Undeploys an embedding index from an endpoint."""
-    if not self.embedding_index_deployed_id:
-      logging.warning(
-          'AiPlatformClient: No deployed index found on endpoint: %s',
-          embedding_index_endpoint.display_name,
+    """Deletes all existing embedding index endpoints."""
+    existing_endpoints = aiplatform.MatchingEngineIndexEndpoint.list()
+    for endpoint_name in existing_endpoints:
+      logging.info(
+          'AiPlatformClient: Deleting index endpoint: %s',
+          endpoint_name.display_name,
       )
-      return
-    logging.info(
-        'AiPlatformClient: Undeploying index endpoint: %s',
-        embedding_index_endpoint.display_name,
-    )
-    embedding_index_endpoint.undeploy_index(
-        deployed_index_id=self.embedding_index_deployed_id,
-    )
+      index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
+          endpoint_name.name
+      )
+      index_endpoint.delete(force=True)
+      logging.info(
+          'AiPlatformClient: Deleted index endpoint: %s',
+          endpoint_name.display_name,
+      )
+    self.embedding_index_endpoint = None
+    self.embedding_index_deployed_id = None

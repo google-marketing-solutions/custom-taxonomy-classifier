@@ -248,26 +248,16 @@ class AiplatformClientTest(absltest.TestCase):
     with self.assertRaises(ai_platform_client_lib.NotFoundError):
       ai_platform_client.find_neighbors_for_vectors(vectors=vectors)
 
-  def test_undeploy_embedding_index_from_endpoint(self):
+  def test_delete_all_embedding_index_endpoints(self):
     ai_platform_client = ai_platform_client_lib.AiPlatformClient()
-    ai_platform_client.undeploy_embedding_index_from_endpoint(
-        embedding_index_endpoint=self.mock_matching_engine_endpoint
+    ai_platform_client.delete_all_embedding_index_endpoints()
+
+    self.mock_matching_engine_endpoint.return_value.delete.assert_called_once_with(
+        force=True
     )
 
-    self.mock_matching_engine_endpoint.undeploy_index.assert_called_once_with(
-        self.deployed_index_mock.id
-    )
-
-  def test_undeploy_embedding_index_from_endpoint_if_none_exists_not_called(
-      self,
-  ):
-    self.mock_matching_engine_endpoint.return_value.deployed_indexes = []
-    ai_platform_client = ai_platform_client_lib.AiPlatformClient()
-    ai_platform_client.undeploy_embedding_index_from_endpoint(
-        embedding_index_endpoint=self.mock_matching_engine_endpoint
-    )
-
-    self.mock_matching_engine_endpoint.undeploy_index.assert_not_called()
+    self.assertIsNone(ai_platform_client.embedding_index_endpoint)
+    self.assertIsNone(ai_platform_client.embedding_index_deployed_id)
 
 
 if __name__ == '__main__':
