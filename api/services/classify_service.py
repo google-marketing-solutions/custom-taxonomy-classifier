@@ -27,6 +27,7 @@ from database import postgres_client as postgres_client_lib
 class ClassifyResult:
   text: Optional[str] = None
   media_uri: Optional[str] = None
+  media_description: Optional[str] = None
   categories: Optional[list[dict[str, Union[str, float]]]] = None
 
 
@@ -105,21 +106,28 @@ class ClassifyService:
     text_embeddings = self.vertex_client.get_embeddings_batch(
         text_list, media_descriptions
     )
-    return self._find_nearest_neighbors_for_text(text_embeddings)
+    return self._find_nearest_neighbors_for_text(
+        text_embeddings, media_descriptions
+    )
 
   def _find_nearest_neighbors_for_text(
       self,
       text_embeddings: dict[str, list[float]],
+      media_descriptions: Optional[list[tuple[str, str]]] = None,
   ) -> ClassifyResults:
     """Finds the nearest neighbors for text.
 
     Args:
       text_embeddings: An object containing embeddings for all text elements.
+      media_descriptions: List of (media path, description) tuples.
 
     Returns:
       A list of dict objects with text as the key and the similarities to
       taxonomy nodes as values.
     """
+    media_descriptions_dict = (
+        dict(media_descriptions) if media_descriptions else {}
+    )
     vectors = list(text_embeddings.values())
     text_list = list(text_embeddings.keys())
     results = self.ai_platform_client.find_neighbors_for_vectors(
@@ -134,7 +142,11 @@ class ClassifyService:
         )
       if _has_valid_extension(text):
         classify_results.append(
-            ClassifyResult(media_uri=text, categories=similar_categories)
+            ClassifyResult(
+                media_uri=text,
+                categories=similar_categories,
+                media_description=media_descriptions_dict[text],
+            )
         )
       else:
         classify_results.append(

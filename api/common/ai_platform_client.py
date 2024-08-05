@@ -325,7 +325,9 @@ class AiPlatformClient:
       index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
           endpoint_name.name
       )
-      index_endpoint.delete(force=True)
+      index_endpoint.delete(
+          force=True
+      )  # Force undeployes indexes, before deleting the endpoint.
       logging.info(
           'AiPlatformClient: Deleted index endpoint: %s',
           endpoint_name.display_name,
