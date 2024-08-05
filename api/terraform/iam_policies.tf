@@ -62,6 +62,12 @@ resource "google_project_iam_member" "classify_api_sa_token_creator" {
   role    = "roles/iam.serviceAccountTokenCreator"
 }
 
+resource "google_project_iam_member" "classify_api_sa_service_account_user" {
+  member  = "serviceAccount:${google_service_account.classify_api_sa.email}"
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"
+}
+
 resource "google_project_iam_member" "classify_api_sa_storage_object_admin" {
   member  = "serviceAccount:${google_service_account.classify_api_sa.email}"
   project = var.project_id
