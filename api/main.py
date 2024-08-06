@@ -48,6 +48,7 @@ class ClassifyResponse(pydantic.BaseModel):
 
   text: str | None = None
   media_uri: str | None = None
+  media_description: str | None = None
   categories: list[dict[str, Union[str, float]]]
 
 

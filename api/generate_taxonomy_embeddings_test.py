@@ -17,7 +17,9 @@
 import os
 from unittest import mock
 
+import freezegun
 from google import auth
+from googleapiclient import discovery
 
 from custom_taxonomy_classifier.api import generate_taxonomy_embeddings
 from common import ai_platform_client as ai_platform_client_lib
@@ -44,6 +46,9 @@ class GenerateTaxonomyEmbeddingsTest(absltest.TestCase):
         'fake_worksheet',
         '1',
         'fake_task_id',
+        'fake_project_id',
+        'fake_region',
+        'fake_service_name',
     ]
 
     self.enter_context(
@@ -57,6 +62,17 @@ class GenerateTaxonomyEmbeddingsTest(absltest.TestCase):
             base_postgres_client_lib, 'BasePostgresClient', autospec=True
         )
     )
+    self.mock_discovery_build = self.enter_context(
+        mock.patch.object(discovery, 'build', autospec=True)
+    )
+    self.mock_discovery_build.return_value = mock.MagicMock()
+    self.mock_discovery_build.return_value.projects.return_value.locations.return_value.services.return_value.get.return_value.execute.return_value = {
+        'template': {'containers': [{'env': []}]},
+    }
+    self.mock_discovery_build.return_value.projects.return_value.locations.return_value.services.return_value.patch.return_value.execute.return_value = {
+        'done': True,
+        'name': 'fake_operation_name',
+    }
     self.mock_base_postgres_client.return_value.engine = mock.MagicMock()
     self.mock_storage_client = self.enter_context(
         mock.patch.object(storage_client_lib, 'StorageClient', autospec=True)
@@ -106,6 +122,27 @@ class GenerateTaxonomyEmbeddingsTest(absltest.TestCase):
     )
     self.mock_taxonomy_service.return_value.create_taxonomy_embeddings_index_endpoint.assert_called_once_with(
         'fake_spreadsheet_id', 'fake_worksheet', 1, True
+    )
+
+  @freezegun.freeze_time('2024-01-01')
+  def test_restart_cloud_run_service(self):
+    generate_taxonomy_embeddings.restart_cloud_run_service(
+        'fake_project_id',
+        'fake_region',
+        'fake_service_name',
+    )
+    self.mock_discovery_build.return_value.projects.return_value.locations.return_value.services.return_value.patch.assert_called_once_with(
+        name='projects/fake_project_id/locations/fake_region/services/fake_service_name',
+        body={
+            'template': {
+                'containers': [{
+                    'env': [{
+                        'name': 'RESTART_TIME',
+                        'value': '2024-01-01 00:00:00',
+                    }]
+                }]
+            }
+        },
     )
 
 

@@ -81,10 +81,10 @@ class AiPlatformClient:
     )
     self._bucket_name = os.environ['BUCKET_NAME']
     self._vpc_network_id = os.environ['VPC_NETWORK_ID']
-    self._embedding_index_endpoint = self._get_embedding_index_endpoint()
-    self._embedding_index_deployed_id = (
-        self._get_embedding_index_endpoint_deployed_index_id(
-            self._embedding_index_endpoint
+    self.embedding_index_endpoint = self._getembedding_index_endpoint()
+    self.embedding_index_deployed_id = (
+        self._getembedding_index_endpoint_deployed_index_id(
+            self.embedding_index_endpoint
         )
     )
 
@@ -107,22 +107,22 @@ class AiPlatformClient:
     Raises:
       NotFoundError: If the matching index endpoint has no deployments.
     """
-    if not self._embedding_index_endpoint:
+    if not self.embedding_index_endpoint:
       logging.error('AiPlatform Client: No index endpoint found.')
       raise NotFoundError('AiPlatform Client: No index endpoint found.')
     logging.info(
         'AiPlatform Client: Running query with embedding index endpoint: %s',
-        self._embedding_index_endpoint.display_name,
+        self.embedding_index_endpoint.display_name,
     )
-    if not self._embedding_index_deployed_id:
+    if not self.embedding_index_deployed_id:
       logging.error(
           'AiPlatform Client: No index deployed at the chosen endpoint.'
       )
       raise NotFoundError(
           'AiPlatform Client: No index deployed at the chosen endpoint.'
       )
-    response = self._embedding_index_endpoint.match(
-        deployed_index_id=self._embedding_index_deployed_id,
+    response = self.embedding_index_endpoint.match(
+        deployed_index_id=self.embedding_index_deployed_id,
         queries=vectors,
         num_neighbors=num_neighbors,
     )
@@ -132,7 +132,7 @@ class AiPlatformClient:
     )
     return response
 
-  def _get_embedding_index_endpoint_deployed_index_id(
+  def _getembedding_index_endpoint_deployed_index_id(
       self,
       embedding_index_endpoint: aiplatform.MatchingEngineIndexEndpoint,
       embedding_index_deployed_display_name: str = _DEFAULT_INDEX_DEPLOYED_DISPLAY_NAME,
@@ -168,7 +168,7 @@ class AiPlatformClient:
         embedding_index_deployed_display_name,
     )
 
-  def _get_embedding_index_endpoint(
+  def _getembedding_index_endpoint(
       self,
       embedding_index_endpoint_display_name: str = _DEFAULT_INDEX_ENDPOINT_DISPLAY_NAME,
   ) -> aiplatform.MatchingEngineIndexEndpoint:
@@ -246,6 +246,7 @@ class AiPlatformClient:
     Returns:
       An AI Platform MatchingEngineIndexEndpoint resource.
     """
+
     logging.info('AiPlatform Client: Creating index endpoint: %s', display_name)
     embedding_index_endpoint = aiplatform.MatchingEngineIndexEndpoint.create(
         display_name=display_name,
@@ -295,6 +296,7 @@ class AiPlatformClient:
           'AiPlatformClient Client: Deployed index endpoint: %s',
           embedding_index_endpoint.display_name,
       )
+      self.embedding_index_deployed_id = deployed_index_id
     except RuntimeError as runtime_err:
       logging.error(
           'AiPlatformClient: MatchingEngineIndex resource with id  %s'
@@ -309,3 +311,26 @@ class AiPlatformClient:
           deployed_index_id,
       )
       raise
+
+  def delete_all_embedding_index_endpoints(
+      self,
+  ) -> None:
+    """Deletes all existing embedding index endpoints."""
+    existing_endpoints = aiplatform.MatchingEngineIndexEndpoint.list()
+    for endpoint_name in existing_endpoints:
+      logging.info(
+          'AiPlatformClient: Deleting index endpoint: %s',
+          endpoint_name.display_name,
+      )
+      index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
+          endpoint_name.name
+      )
+      index_endpoint.delete(
+          force=True
+      )  # Force undeployes indexes, before deleting the endpoint.
+      logging.info(
+          'AiPlatformClient: Deleted index endpoint: %s',
+          endpoint_name.display_name,
+      )
+    self.embedding_index_endpoint = None
+    self.embedding_index_deployed_id = None

@@ -208,6 +208,7 @@ class TaxonomyServiceTest(parameterized.TestCase):
     self._ai_platform_client.create_embeddings_index.assert_called_once_with()
     self._ai_platform_client.create_embeddings_index_endpoint.assert_called_once_with()
     self._ai_platform_client.deploy_embedding_index_to_endpoint.assert_called_once()
+    self._ai_platform_client.delete_all_embedding_index_endpoints.assert_called_once()
 
     self._postgres_client.add_task.assert_called_once_with(_FAKE_TASK_ID)
 

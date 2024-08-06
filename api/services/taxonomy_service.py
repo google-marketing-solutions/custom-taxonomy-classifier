@@ -102,6 +102,12 @@ class TaxonomyService:
         self.task_id, task_lib.TaskStatus.IN_PROGRESS_CREATING_EMBEDDINGS_INDEX
     )
 
+    self._ai_platform_client.delete_all_embedding_index_endpoints()
+    logging.info(
+        'TaxonomyService: Removed all previously created embedding index'
+        ' endpoints.'
+    )
+
     embeddings_index = self._ai_platform_client.create_embeddings_index()
     logging.info(
         'TaxonomyService: Created embeddings index: %s', embeddings_index.name
@@ -111,7 +117,6 @@ class TaxonomyService:
         self.task_id,
         task_lib.TaskStatus.IN_PROGRESS_CREATING_EMBEDDINGS_INDEX_ENDPOINT
     )
-
     embeddings_index_endpoint = (
         self._ai_platform_client.create_embeddings_index_endpoint()
     )

@@ -126,6 +126,7 @@ class ClassifierTest(parameterized.TestCase):
               ),
               classify_service_lib.ClassifyResult(
                   media_uri='gs://fake/path_1.jpeg',
+                  media_description='fake_text_1',
                   categories=[
                       {
                           'name': 'fake_id',
@@ -135,6 +136,7 @@ class ClassifierTest(parameterized.TestCase):
               ),
               classify_service_lib.ClassifyResult(
                   media_uri='gs://fake/path_2.jpeg',
+                  media_description='fake_text_2',
                   categories=[
                       {
                           'name': 'fake_id',
