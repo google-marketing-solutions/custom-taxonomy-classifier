@@ -86,11 +86,17 @@ resource "google_project_iam_member" "classify_api_sa_sql_admin" {
   role    = "roles/cloudsql.admin"
 }
 
-# Needed to execute a cloud run job with overrides.
-resource "google_project_iam_member" "classify_api_sa_run_developer" {
+resource "google_project_iam_member" "classify_api_sa_cloudbuild_builder" {
   member  = "serviceAccount:${google_service_account.classify_api_sa.email}"
   project = var.project_id
-  role    = "roles/run.developer"
+  role    = "roles/cloudbuild.builds.builder"
+}
+
+# Needed to execute a cloud run job with overrides and restart a cloud run service.
+resource "google_project_iam_member" "classify_api_sa_run_admin" {
+  member  = "serviceAccount:${google_service_account.classify_api_sa.email}"
+  project = var.project_id
+  role    = "roles/run.admin"
 }
 
 # Needed to access the classify service image during migrations from Cloud Build.
