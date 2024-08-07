@@ -51,6 +51,7 @@ class ClassifyResponse(pydantic.BaseModel):
   media_uri: str | None = None
   media_description: str | None = None
   categories: list[dict[str, Union[str, float]]]
+  embedding: list[float] | None = None
 
 
 class GenerateTaxonomyEmbeddingsRequest(pydantic.BaseModel):
