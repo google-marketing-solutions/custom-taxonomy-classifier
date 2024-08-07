@@ -41,6 +41,7 @@ class ClassifyRequest(pydantic.BaseModel):
 
   text: str | list[str] = None
   media_uri: str | list[str] = None
+  embeddings: bool = False
 
 
 class ClassifyResponse(pydantic.BaseModel):
@@ -119,6 +120,7 @@ def classify(
     classify_results = services['classify_service'].classify(
         request.text,
         request.media_uri,
+        request.embeddings,
     )
     return classify_results
   except Exception as e:

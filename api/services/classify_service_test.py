@@ -69,6 +69,7 @@ class ClassifierTest(parameterized.TestCase):
           },
           find_neighbors_result_count=2,
           generate_descriptions_from_medias_return_value={},
+          embeddings=False,
           expected=[
               classify_service_lib.ClassifyResult(
                   text='fake_text_1',
@@ -91,9 +92,44 @@ class ClassifierTest(parameterized.TestCase):
           ],
       ),
       dict(
+          testcase_name='text_with_embeddings',
+          text_input=['fake_text_1', 'fake_text_2'],
+          media_input=None,
+          embeddings=True,
+          get_embeddings_batch_return_value={
+              'fake_text_1': [0.1, 0.2, 0.3],
+              'fake_text_2': [0.1, 0.2, 0.3],
+          },
+          find_neighbors_result_count=2,
+          generate_descriptions_from_medias_return_value={},
+          expected=[
+              classify_service_lib.ClassifyResult(
+                  text='fake_text_1',
+                  categories=[
+                      {
+                          'name': 'fake_id',
+                          'similarity': mock.ANY,
+                      },
+                  ],
+                  embedding=[0.1, 0.2, 0.3],
+              ),
+              classify_service_lib.ClassifyResult(
+                  text='fake_text_2',
+                  categories=[
+                      {
+                          'name': 'fake_id',
+                          'similarity': mock.ANY,
+                      },
+                  ],
+                  embedding=[0.1, 0.2, 0.3],
+              ),
+          ],
+      ),
+      dict(
           testcase_name='text_and_media',
           text_input=['fake_text_1', 'fake_text_2'],
           media_input=['gs://fake/path_1.jpeg', 'gs://fake/path_2.jpeg'],
+          embeddings=False,
           get_embeddings_batch_return_value={
               'fake_text_1': [0.1, 0.2, 0.3],
               'fake_text_2': [0.1, 0.2, 0.3],
@@ -151,6 +187,7 @@ class ClassifierTest(parameterized.TestCase):
       self,
       text_input,
       media_input,
+      embeddings,
       get_embeddings_batch_return_value,
       find_neighbors_result_count,
       generate_descriptions_from_medias_return_value,
@@ -170,7 +207,7 @@ class ClassifierTest(parameterized.TestCase):
     classifier = classify_service_lib.ClassifyService(
         self.postgres_client, self.vertex_client, self.ai_platform_client
     )
-    actual = classifier.classify(text_input, media_input)
+    actual = classifier.classify(text_input, media_input, embeddings)
     self.assertEqual(actual, expected)
 
   def test_classify_without_media_text_input(self):

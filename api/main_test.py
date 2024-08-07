@@ -40,6 +40,17 @@ _TEST_CLASSIFY_RESPONSE_SUCCESS = [
             {'name': 'category_1', 'similarity': 0.98},
             {'name': 'category_2', 'similarity': 0.89},
         ],
+        'embedding': [0.1, 0.2, 0.3],
+    },
+]
+
+_TEST_CLASSIFY_RESPONSE_SUCCESS_NO_EMBEDDINGS = [
+    {
+        'text': 'foobar',
+        'categories': [
+            {'name': 'category_1', 'similarity': 0.98},
+            {'name': 'category_2', 'similarity': 0.89},
+        ],
     },
 ]
 
@@ -155,10 +166,13 @@ class MainTest(absltest.TestCase):
                 {'name': 'category_1', 'similarity': 0.98},
                 {'name': 'category_2', 'similarity': 0.89},
             ],
+            'embedding': [0.1, 0.2, 0.3],
         },
     ]
     with testclient.TestClient(main.app) as client:
-      actual = client.post('/classify', json={'text': 'foobar'})
+      actual = client.post(
+          '/classify', json={'text': 'foobar', 'embeddings': True}
+      )
 
       self.assertEqual(actual.status_code, 200)
       self.assertListEqual(actual.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS)
@@ -171,12 +185,15 @@ class MainTest(absltest.TestCase):
                 {'name': 'category_1', 'similarity': 0.98},
                 {'name': 'category_2', 'similarity': 0.89},
             ],
+            'embedding': [0.1, 0.2, 0.3],
         },
     ]
     with testclient.TestClient(main.app) as client:
-      actual = client.post('/classify', json={'text': 'foobar'})
+      actual = client.post(
+          '/classify', json={'text': 'foobar', 'embeddings': True}
+      )
       self.mock_classify_service.return_value.classify.assert_called_once_with(
-          'foobar', None
+          'foobar', None, True
       )
       self.assertEqual(actual.status_code, 200)
       self.assertListEqual(actual.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS)
@@ -191,11 +208,14 @@ class MainTest(absltest.TestCase):
             ],
         },
     ]
+
     with testclient.TestClient(main.app) as client:
       response = client.post('/classify', json={'text': ['foobar']})
 
       self.assertEqual(response.status_code, 200)
-      self.assertListEqual(response.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS)
+      self.assertListEqual(
+          response.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS_NO_EMBEDDINGS
+      )
 
   def test_classify_service_with_medias(self):
     self.mock_classify_service.return_value.classify.return_value = [
@@ -211,7 +231,9 @@ class MainTest(absltest.TestCase):
       response = client.post('/classify', json={'media_uri': ['foobar']})
 
       self.assertEqual(response.status_code, 200)
-      self.assertListEqual(response.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS)
+      self.assertListEqual(
+          response.json(), _TEST_CLASSIFY_RESPONSE_SUCCESS_NO_EMBEDDINGS
+      )
 
   def test_classify_service_with_error(self):
     self.mock_classify_service.return_value.classify.return_value = (
