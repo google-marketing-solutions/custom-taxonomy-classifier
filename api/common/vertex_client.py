@@ -112,9 +112,9 @@ class VertexClient:
       retry=tenacity.retry_if_exception_type(
           google.api_core.exceptions.ResourceExhausted
       ),
-      wait=tenacity.wait_exponential(min=3, multiplier=3, max=60),
+      wait=tenacity.wait_exponential(min=5, multiplier=2, max=70),
       reraise=False,
-      stop=tenacity.stop_after_attempt(5),
+      stop=tenacity.stop_after_attempt(10),
   )
   def _generate_descriptions_from_media(
       self, media_path: str
