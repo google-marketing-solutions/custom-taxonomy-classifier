@@ -41,6 +41,7 @@ class ClassifyRequest(pydantic.BaseModel):
 
   text: str | list[str] = None
   media_uri: str | list[str] = None
+  embeddings: bool = False
 
 
 class ClassifyResponse(pydantic.BaseModel):
@@ -50,6 +51,7 @@ class ClassifyResponse(pydantic.BaseModel):
   media_uri: str | None = None
   media_description: str | None = None
   categories: list[dict[str, Union[str, float]]]
+  embedding: list[float] | None = None
 
 
 class GenerateTaxonomyEmbeddingsRequest(pydantic.BaseModel):
@@ -119,6 +121,7 @@ def classify(
     classify_results = services['classify_service'].classify(
         request.text,
         request.media_uri,
+        request.embeddings,
     )
     return classify_results
   except Exception as e:

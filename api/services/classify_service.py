@@ -29,6 +29,7 @@ class ClassifyResult:
   media_uri: Optional[str] = None
   media_description: Optional[str] = None
   categories: Optional[list[dict[str, Union[str, float]]]] = None
+  embedding: Optional[list[float]] = None
 
 
 ClassifyResults = list[ClassifyResult]
@@ -73,6 +74,7 @@ class ClassifyService:
       self,
       text: Optional[Union[str, list[str]]] = None,
       media_uri: Optional[Union[str, list[str]]] = None,
+      embeddings: bool = False,
   ) -> ClassifyResults:
     """Gets the semantic similarty of the passed input relative to the taxonomy.
 
@@ -82,6 +84,7 @@ class ClassifyService:
     Args:
       text: A string or a list of strings.
       media_uri: A file path or list of file paths.
+      embeddings: A boolean indicating whether to return the embeddings.
 
     Returns:
       A response object containing the text input elements as keys and their
@@ -107,19 +110,21 @@ class ClassifyService:
         text_list, media_descriptions
     )
     return self._find_nearest_neighbors_for_text(
-        text_embeddings, media_descriptions
+        text_embeddings, media_descriptions, embeddings
     )
 
   def _find_nearest_neighbors_for_text(
       self,
       text_embeddings: dict[str, list[float]],
       media_descriptions: Optional[list[tuple[str, str]]] = None,
+      embeddings: bool = False,
   ) -> ClassifyResults:
     """Finds the nearest neighbors for text.
 
     Args:
       text_embeddings: An object containing embeddings for all text elements.
       media_descriptions: List of (media path, description) tuples.
+      embeddings: A boolean indicating whether to return the embeddings.
 
     Returns:
       A list of dict objects with text as the key and the similarities to
@@ -146,10 +151,15 @@ class ClassifyService:
                 media_uri=text,
                 categories=similar_categories,
                 media_description=media_descriptions_dict[text],
+                embedding=text_embeddings[text] if embeddings else None,
             )
         )
       else:
         classify_results.append(
-            ClassifyResult(text=text, categories=similar_categories)
+            ClassifyResult(
+                text=text,
+                categories=similar_categories,
+                embedding=text_embeddings[text] if embeddings else None,
+            )
         )
     return classify_results
