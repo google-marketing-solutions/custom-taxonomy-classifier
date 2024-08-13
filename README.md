@@ -1,27 +1,22 @@
-# Customer Classification API
+# Custom Taxonomy Classification API
 
-## Problem
+API on Google Cloud Run to classify text, images and videos into a custom
+taxonomy.
 
-Existing classification APIs such as Cloud NLP and others may not accurately
-reflect a company's business lines, product categories or segments. Training a
-custom model for classifying text content into a custom taxonomy is costly and
-time-consuming.
+The API exposes endpoints to:
 
-## Solution
+*   Use Google's embedding models to generate embedding vectors for a provided
+    list of categories, create an index using tree-AH algorithm and expose the
+    index via a Google Cloud Vector Search endpoint (initial setup)
+*   Classify any given text, image or video using the above index and endpoint.
+*   Track the status of the initial setup task.
 
-Using an existing LLM's text embeddings we can calculate the dot product
-similarity and apply unit-norm normalization for a given piece of text and every
-category in a custom taxonomy. The higher the dot product similarity the higher
-the confidence that the passed text is part of that category. Dot Product
-Similarity is a standard metric in natural language classification systems and
-has several advantages. Most importantly, it measures the similarity between
-text and categories by calculating the cosine of the angle between their vector
-representations. The dot product of the vectors are then calculated by
-multiplying their corresponding elements and summing the results. The cosine of
-the angle between them is then calculated by dividing the dot product by the
-product of the magnitudes of the vectors. It also works well with
-high-dimensional text data containing many zero elements and scores ranging from
-0 (no similarity) to 1 (perfect match), providing intuitive insights.
+Features:
+
+*   Import a taxonomy from a Google Spreadsheet.
+*   Integration with Google Vector Search for fast nearest neighbor searches.
+*   Rate limiting for Vertex API calls.
+*   VPC network with dedicated firewall rules.
 
 ## Prerequisites
 
@@ -29,7 +24,7 @@ high-dimensional text data containing many zero elements and scores ranging from
     Owner`.
 2.  Have a Google Spreadsheet containing the taxonomy (list of category names).
 
-## Deployment
+## Installation
 
 To deploy, run the following commands in a Google Cloud Shell and follow the
 instructions. If there's a problem with the deployment then address the error
@@ -48,7 +43,7 @@ the Google Cloud project you intend to use.
 
 `classify-api-sa@<your-cloud-project-id>.iam.gserviceaccount.com`
 
-## Usage
+## API Usage
 
 The API has 3 endpoints:
 
@@ -56,6 +51,10 @@ The API has 3 endpoints:
 
     Used to generate and store the vector embeddings for each of the taxonomy
     nodes. This will run as a background process and returns a task_id.
+
+    NOTE: This endpoint needs to be called at least once before the other
+    endpoints below are functional. Calling this endpoint overwrites any
+    existing Vector Search endpoints.
 
 1.  **GET /task_status/{task_id}**
 
@@ -165,6 +164,8 @@ their corresponding scores (similarity).
     path to a GCS location or a list of file paths. Note that only the following
     media extensions are supported: `.jpg, .jpeg, .png, .x-flv, .mov, .mpeg,
     .mpegps, .mpg, .mp4, .webm, .wmv, .3gpp`
+*   *embeddings* (optional): Whether or not to include the generated embeddings
+    for text and media. The default values is `false`.
 
 With a list of strings:
 
@@ -182,7 +183,7 @@ With a single string:
 curl -X POST \
 -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
 -H 'Content-Type: application/json' \
--d '{"text": "Text to classify"}' \
+-d '{"text": "Text to classify", "embeddings": "true"}' \
 -i [YOUR-CLOUD-RUN-URL]/classify
 ```
 
@@ -203,8 +204,12 @@ similarity to the passed text.
 
 **Attributes**:
 
-*   *text*: The text content string to classify.
+*   *text*: The text content string that was classified.
+*   *media_uri*: The image or video content that was classified.
 *   *categories*: An array containing category similarity objects.
+*   *media_description*: A description of the passed media object.
+*   *embedding*: The embedding vector for the text or media. Only present when
+    the `embeddings` argument was set to `true` in the request.
 
 **Example Response**:
 
@@ -214,6 +219,7 @@ The below would be a response for the following request data:
 {
   "text": "Text to classify",
   "media_uri": "gs://path/to/image.jpg"
+  "embeddings": "true"
 }
 ```
 
@@ -222,6 +228,7 @@ The below would be a response for the following request data:
   {
     "text": "Text to classify"
     "media_uri": "null",
+    "media_description": "null",
     "categories": [
       {
         "name": "Some category",
@@ -232,11 +239,13 @@ The below would be a response for the following request data:
         "similarity": 0.8
       },
       ...
-    ]
+    ],
+    "embedding": [0.1, 0.2, 0.3, ...]
   },
   {
     "text": "null",
     "media_uri": "gs://path/to/image.jpg",
+    "media_description": "A cat with blue eyes looking up.",
     "categories": [
       {
         "name": "Some category",
@@ -247,7 +256,8 @@ The below would be a response for the following request data:
         "similarity": 0.8
       },
       ...
-    ]
+    ],
+    "embedding": [0.3, 0.2, 0.1, ...]
   }
 ]
 ```
