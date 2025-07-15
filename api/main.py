@@ -39,8 +39,8 @@ app = fastapi.FastAPI()
 class ClassifyRequest(pydantic.BaseModel):
   """Request to classify a text string or media."""
 
-  text: str | list[str] = None
-  media_uri: str | list[str] = None
+  text: str | list[str] | None = None
+  media_uri: str | list[str] | None = None
   embeddings: bool = False
 
 
@@ -50,7 +50,9 @@ class ClassifyResponse(pydantic.BaseModel):
   text: str | None = None
   media_uri: str | None = None
   media_description: str | None = None
-  categories: list[dict[str, Union[str, float]]]
+  categories: list[dict[str, Union[str, float]]] = pydantic.Field(
+      default_factory=list
+  )
   embedding: list[float] | None = None
 
 
@@ -70,6 +72,22 @@ class TaskStatusResponse(pydantic.BaseModel):
   status: str
   time_created: Optional[datetime.datetime] = None
   time_updated: Optional[datetime.datetime] = None
+
+  @pydantic.field_serializer('time_created', 'time_updated')
+  def serialize_dt(self, dt: Optional[datetime.datetime]) -> str | None:
+    """Custom serializer for datetime fields.
+
+    Args:
+      dt: The datetime object to serialize.
+
+    Formats the datetime object to ISO 8601 with timezone.
+    """
+    if dt is None:
+      return None
+    # Ensure the datetime object has timezone information (using UTC if naive)
+    if dt.tzinfo is None:
+      dt = dt.replace(tzinfo=datetime.timezone.utc)
+    return dt.isoformat()
 
 
 @app.on_event('startup')

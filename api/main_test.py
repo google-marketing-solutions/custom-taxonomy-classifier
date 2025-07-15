@@ -37,8 +37,8 @@ _TEST_CLASSIFY_RESPONSE_SUCCESS = [
         'media_uri': None,
         'media_description': None,
         'categories': [
-            {'name': 'category_1', 'similarity': '0.98'},
-            {'name': 'category_2', 'similarity': '0.89'},
+            {'name': 'category_1', 'similarity': 0.98},
+            {'name': 'category_2', 'similarity': 0.89},
         ],
         'embedding': [0.1, 0.2, 0.3],
     },
@@ -50,8 +50,8 @@ _TEST_CLASSIFY_RESPONSE_SUCCESS_NO_EMBEDDINGS = [
         'media_uri': None,
         'media_description': None,
         'categories': [
-            {'name': 'category_1', 'similarity': '0.98'},
-            {'name': 'category_2', 'similarity': '0.89'},
+            {'name': 'category_1', 'similarity': 0.98},
+            {'name': 'category_2', 'similarity': 0.89},
         ],
         'embedding': None,
     },
