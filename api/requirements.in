@@ -1,6 +1,7 @@
 fastapi
 pydantic
 uvicorn
+h11==0.16.0
 absl-py
 google-cloud
 google-cloud-logging
